@@ -34,6 +34,9 @@ case "$1" in
     clean)
         eval "rm -rf out kernel_log.log"
         ;;
+    kernelsu)
+        eval "./KernelSU/kernel/setup.sh next"
+        ;;
     config)
         eval "$base_command realme_c35_nyx_defconfig"
         ;;
