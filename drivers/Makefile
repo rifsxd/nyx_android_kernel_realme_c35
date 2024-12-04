@@ -188,7 +188,6 @@ obj-$(CONFIG_INTERCONNECT)	+= interconnect/
 obj-$(CONFIG_COUNTER)		+= counter/
 obj-$(CONFIG_TRUSTY)		+= trusty/
 obj-$(CONFIG_ARCH_SPRD)         += unisoc_platform/
-obj-$(CONFIG_KSU)		+= kernelsu/
 
 
 #如果使用该宏定义，则选择向beidou项目方向编译
