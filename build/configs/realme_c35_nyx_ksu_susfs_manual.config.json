@@ -1,7 +1,7 @@
 [
     {
         "kernelSource": {
-            "name": "realme_c35",
+            "name": "realme_c35_nyx_ksu_susfs_manual",
             "repo": "https://github.com/rifsxd/nyx_android_kernel_realme_c35",
             "branch": "dev",
             "device": "realme_c35",
