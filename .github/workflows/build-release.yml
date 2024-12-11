@@ -2,11 +2,9 @@ name: Build kernel artifact
 
 on:
   push:
-    branches:
-      - "dev"
+    tags:
+      - "n*"
   workflow_dispatch:
-  schedule:
-    - cron: "0 12 * * *"
 
 jobs:
   Read-configuration:
@@ -261,7 +259,7 @@ jobs:
             cd tmp/dtbo
             ${{ github.workspace }}/build/bin/mkdtimg create dtbo.img ${{ env.OUT_DIR }}/arch/${{ env.ARCH }}/boot/dts/*/*.dtbo
             echo "🤔 Built dtbo.img sucessfully"
-            mv dtbo.img ../dtbo.img
+            mv dtbo.img ../${{ env.KERNEL_NAME }}-${{ env.BUILD_DATE }}-dtbo.img
           else
             echo "🤔 Compiled .dtbo files not found!"
             exit 1
@@ -282,7 +280,7 @@ jobs:
             echo "🤔 Replaced stock kernel with custom kernel"
             ${{ github.workspace }}/build/bin/magiskboot repack ${{ github.workspace }}/build/boot/boot.img
             echo "🤔 Repacked boot.img"
-            mv new-boot.img ../boot.img
+            mv new-boot.img ../${{ env.KERNEL_NAME }}-${{ env.BUILD_DATE }}-boot.img
           else
             echo "🤔 Compiled kernel Image not found!"
             exit 1
@@ -332,7 +330,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.KERNEL_NAME }}-${{ env.BUILD_DATE }}-boot.img
-          path: ${{ github.workspace }}/tmp/boot.img
+          path: ${{ github.workspace }}/tmp/${{ env.KERNEL_NAME }}-${{ env.BUILD_DATE }}-boot.img
           if-no-files-found: ignore
           retention-days: 7
 
@@ -341,8 +339,8 @@ jobs:
         env:
           ARCH: ${{ steps.generate-args.outputs.ARCH }}
         with:
-          name: ${{ env.KERNEL_NAME }}-${{ env.BUILD_DATE }}-dtbo.img
-          path: ${{ github.workspace }}/tmp/dtbo.img
+          name: ${{ env.KERNEL_NAME }}-${{ env.BUILD_DATE }}-${{ env.BUILD_DATE }}-dtbo.img
+          path: ${{ github.workspace }}/tmp/${{ env.KERNEL_NAME }}-dtbo.img
           if-no-files-found: ignore
           retention-days: 7
 
@@ -402,3 +400,15 @@ jobs:
         with:
           name: "${{ env.ANYKERNEL3_FILE }}"
           path: AnyKernel3/*
+
+      - name: 🧧 GitHub Release => Nyx-(${{ env.BUILD_DATE }})
+        env:
+          ANYKERNEL3_FILE: "AnyKernel3-${{ env.KERNEL_NAME }}-${{ env.BUILD_DATE }}"
+        continue-on-error: true
+        uses: softprops/action-gh-release@v1
+        if: ${{ env.USE_ANYKERNEL3 == 'true' && env.CONFIRM_RELEASE == 'true' }}
+        with:
+          files: |
+            ${{ env.ANYKERNEL3_FILE }}.zip
+            ${{ github.workspace }}/tmp/${{ env.KERNEL_NAME }}-${{ env.BUILD_DATE }}-boot.img
+            
