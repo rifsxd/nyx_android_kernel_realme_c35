@@ -232,8 +232,17 @@ jobs:
             KERNELSU_USER=$(echo $CUSTOM_KERNELSU | jq -r ".user")
             KERNELSU_BRANCH=$(echo $CUSTOM_KERNELSU | jq -r ".branch")
 
+            # Delete old KernelSU
+            if [ -d "./KernelSU" ]; then
+              rm -rf "./KernelSU"
+            fi
+            if [ -d "./drivers/kernelsu" ]; then
+              rm -rf "./drivers/kernelsu"
+            fi
+
+            # Apply new KernelSU patches
             curl -LSs "https://raw.githubusercontent.com/$KERNELSU_USER/KernelSU/$KERNELSU_BRANCH/kernel/setup.sh" | bash -s $KERNELSU_BRANCH
-            echo "🤔 Use custom AnyKernel3 => ($ANYKERNEL_REPO)"
+
           else
         
           # Delete old KernelSU
