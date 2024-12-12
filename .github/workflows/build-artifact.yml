@@ -65,7 +65,7 @@ jobs:
       CONFIRM_RELEASE: ${{ matrix.CONFIG.AnyKernel3.release }}
 
       # Whether to enable KernelSU
-      ENABLE_KERNELSU: ${{ matrix.CONFIG.enableKernelSU }}
+      ENABLE_KERNELSU: ${{ matrix.CONFIG.KernelSU.enable }}
 
       # Set output & ccache directory
       OUT_DIR: "${{ github.workspace }}/out"
@@ -222,9 +222,20 @@ jobs:
       - name: 😋 Setup KernelSU
         working-directory: ${{ github.workspace }}
         env:
+          PARAMS: "${{ toJSON(matrix.CONFIG.KernelSU) }}"
           ARCH: ${{ steps.generate-args.outputs.ARCH }}
         if: ${{ env.ENABLE_KERNELSU == 'true' }}
         run: |
+          if echo -n '${{ env.PARAMS }}' | jq -e 'has("custom")' > /dev/null; then
+
+            CUSTOM_KERNELSU=$(echo -n '${{ env.PARAMS }}' | jq -r ".custom")
+            KERNELSU_USER=$(echo $CUSTOM_KERNELSU | jq -r ".user")
+            KERNELSU_BRANCH=$(echo $CUSTOM_KERNELSU | jq -r ".branch")
+
+            curl -LSs "https://raw.githubusercontent.com/$KERNELSU_USER/KernelSU/$KERNELSU_BRANCH/kernel/setup.sh" | bash -s $KERNELSU_BRANCH
+            echo "🤔 Use custom AnyKernel3 => ($ANYKERNEL_REPO)"
+          else
+        
           # Delete old KernelSU
           if [ -d "./KernelSU" ]; then
             rm -rf "./KernelSU"
@@ -234,7 +245,9 @@ jobs:
           fi
 
           # Apply new KernelSU patches
-          curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU/next/kernel/setup.sh" | bash -s next
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
+
+          fi
 
           cat arch/${{ env.ARCH }}/configs/${{ env.KERNEL_DEFCONFIG_PATH }}
 
@@ -261,7 +274,7 @@ jobs:
             cd tmp/dtbo
             ${{ github.workspace }}/build/bin/mkdtimg create dtbo.img ${{ env.OUT_DIR }}/arch/${{ env.ARCH }}/boot/dts/*/*.dtbo
             echo "🤔 Built dtbo.img sucessfully"
-            mv dtbo.img ../dtbo.img
+            mv dtbo.img ../${{ env.KERNEL_NAME }}-${{ env.BUILD_DATE }}-dtbo.img
           else
             echo "🤔 Compiled .dtbo files not found!"
             exit 1
@@ -282,7 +295,7 @@ jobs:
             echo "🤔 Replaced stock kernel with custom kernel"
             ${{ github.workspace }}/build/bin/magiskboot repack ${{ github.workspace }}/build/boot/boot.img
             echo "🤔 Repacked boot.img"
-            mv new-boot.img ../boot.img
+            mv new-boot.img ../${{ env.KERNEL_NAME }}-${{ env.BUILD_DATE }}-boot.img
           else
             echo "🤔 Compiled kernel Image not found!"
             exit 1
@@ -332,7 +345,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.KERNEL_NAME }}-${{ env.BUILD_DATE }}-boot.img
-          path: ${{ github.workspace }}/tmp/boot.img
+          path: ${{ github.workspace }}/tmp/${{ env.KERNEL_NAME }}-${{ env.BUILD_DATE }}-boot.img
           if-no-files-found: ignore
           retention-days: 7
 
@@ -341,8 +354,8 @@ jobs:
         env:
           ARCH: ${{ steps.generate-args.outputs.ARCH }}
         with:
-          name: ${{ env.KERNEL_NAME }}-${{ env.BUILD_DATE }}-dtbo.img
-          path: ${{ github.workspace }}/tmp/dtbo.img
+          name: ${{ env.KERNEL_NAME }}-${{ env.BUILD_DATE }}-${{ env.BUILD_DATE }}-dtbo.img
+          path: ${{ github.workspace }}/tmp/${{ env.KERNEL_NAME }}-dtbo.img
           if-no-files-found: ignore
           retention-days: 7
 

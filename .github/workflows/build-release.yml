@@ -63,7 +63,7 @@ jobs:
       CONFIRM_RELEASE: ${{ matrix.CONFIG.AnyKernel3.release }}
 
       # Whether to enable KernelSU
-      ENABLE_KERNELSU: ${{ matrix.CONFIG.enableKernelSU }}
+      ENABLE_KERNELSU: ${{ matrix.CONFIG.KernelSU.enable }}
 
       # Set output & ccache directory
       OUT_DIR: "${{ github.workspace }}/out"
@@ -220,9 +220,20 @@ jobs:
       - name: 😋 Setup KernelSU
         working-directory: ${{ github.workspace }}
         env:
+          PARAMS: "${{ toJSON(matrix.CONFIG.KernelSU) }}"
           ARCH: ${{ steps.generate-args.outputs.ARCH }}
         if: ${{ env.ENABLE_KERNELSU == 'true' }}
         run: |
+          if echo -n '${{ env.PARAMS }}' | jq -e 'has("custom")' > /dev/null; then
+
+            CUSTOM_KERNELSU=$(echo -n '${{ env.PARAMS }}' | jq -r ".custom")
+            KERNELSU_USER=$(echo $CUSTOM_KERNELSU | jq -r ".user")
+            KERNELSU_BRANCH=$(echo $CUSTOM_KERNELSU | jq -r ".branch")
+
+            curl -LSs "https://raw.githubusercontent.com/$KERNELSU_USER/KernelSU/$KERNELSU_BRANCH/kernel/setup.sh" | bash -s $KERNELSU_BRANCH
+            echo "🤔 Use custom AnyKernel3 => ($ANYKERNEL_REPO)"
+          else
+        
           # Delete old KernelSU
           if [ -d "./KernelSU" ]; then
             rm -rf "./KernelSU"
@@ -232,7 +243,9 @@ jobs:
           fi
 
           # Apply new KernelSU patches
-          curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU/next/kernel/setup.sh" | bash -s next
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
+
+          fi
 
           cat arch/${{ env.ARCH }}/configs/${{ env.KERNEL_DEFCONFIG_PATH }}
 

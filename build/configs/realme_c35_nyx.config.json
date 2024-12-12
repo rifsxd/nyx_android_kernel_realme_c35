@@ -64,6 +64,12 @@
                 "branch": "master"
             }
         },
-        "enableKernelSU": true
+        "KernelSU": {
+            "enable": false,
+            "custom": {
+                "user": "rifsxd",
+                "branch": "next"
+            }
+        }
     }
 ]

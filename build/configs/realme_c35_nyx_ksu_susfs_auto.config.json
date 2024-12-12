@@ -64,6 +64,12 @@
                 "branch": "master"
             }
         },
-        "enableKernelSU": true
+        "KernelSU": {
+            "enable": true,
+            "custom": {
+                "user": "rifsxd",
+                "branch": "susfs-5.4"
+            }
+        }
     }
 ]
