@@ -1,4 +1,4 @@
-name: Release built artifacts
+name: Release kernel artifacts
 
 on:
   push:
