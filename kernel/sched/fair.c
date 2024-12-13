@@ -43,7 +43,6 @@
  * (BORE default: 24ms constant, units: nanoseconds)
  * (CFS  default: 6ms * (1 + ilog(ncpus)), units: nanoseconds)
  */
-
 #ifdef CONFIG_SCHED_BORE
 unsigned int sysctl_sched_latency			= 24000000ULL;
 static unsigned int normalized_sysctl_sched_latency	= 24000000ULL;
@@ -64,7 +63,6 @@ static unsigned int normalized_sysctl_sched_latency	= 6000000ULL;
  * (BORE default SCHED_TUNABLESCALING_NONE = *1 constant)
  * (CFS  default SCHED_TUNABLESCALING_LOG  = *(1+ilog(ncpus))
  */
-
 #ifdef CONFIG_SCHED_BORE
 enum sched_tunable_scaling sysctl_sched_tunable_scaling = SCHED_TUNABLESCALING_NONE;
 #else // CONFIG_SCHED_BORE
@@ -77,7 +75,6 @@ enum sched_tunable_scaling sysctl_sched_tunable_scaling = SCHED_TUNABLESCALING_L
  * (BORE default: 3 msec constant, units: nanoseconds)
  * (CFS  default: 0.75 msec * (1 + ilog(ncpus)), units: nanoseconds)
  */
-
 #ifdef CONFIG_SCHED_BORE
 unsigned int sysctl_sched_min_granularity			= 3000000ULL;
 unsigned int normalized_sysctl_sched_min_granularity	= 3000000ULL;
@@ -107,7 +104,6 @@ unsigned int sysctl_sched_child_runs_first __read_mostly;
  * (BORE default: 4 msec constant, units: nanoseconds)
  * (CFS  default: 1 msec * (1 + ilog(ncpus)), units: nanoseconds)
  */
-
 #ifdef CONFIG_SCHED_BORE
 unsigned int sysctl_sched_wakeup_granularity			= 4000000UL;
 unsigned int normalized_sysctl_sched_wakeup_granularity	= 4000000UL;
@@ -768,7 +764,6 @@ static inline u64 calc_delta_fair(u64 delta, struct sched_entity *se)
 {
 	if (unlikely(se->load.weight != NICE_0_LOAD))
 		delta = __calc_delta(delta, NICE_0_LOAD, &se->load);
-
 	return delta;
 }
 
@@ -5599,6 +5594,7 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 	int task_sleep = flags & DEQUEUE_SLEEP;
 	int idle_h_nr_running = task_has_idle_policy(p);
 
+	util_est_dequeue(&rq->cfs, p);
 #ifdef CONFIG_SCHED_BORE
 	if (task_sleep) {
 		cfs_rq = cfs_rq_of(se);
@@ -5607,8 +5603,6 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 		restart_burst(se);
 	}
 #endif // CONFIG_SCHED_BORE
-
-	util_est_dequeue(&rq->cfs, p);
 
 	for_each_sched_entity(se) {
 		cfs_rq = cfs_rq_of(se);
