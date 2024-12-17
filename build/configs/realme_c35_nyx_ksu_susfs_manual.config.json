@@ -68,7 +68,7 @@
             "enable": true,
             "custom": {
                 "user": "rifsxd",
-                "branch": "susfs-5.4"
+                "branch": "susfs"
             }
         }
     }
