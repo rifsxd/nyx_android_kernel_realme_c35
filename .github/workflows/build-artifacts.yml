@@ -231,6 +231,7 @@ jobs:
             CUSTOM_KERNELSU=$(echo -n '${{ env.PARAMS }}' | jq -r ".custom")
             KERNELSU_USER=$(echo $CUSTOM_KERNELSU | jq -r ".user")
             KERNELSU_BRANCH=$(echo $CUSTOM_KERNELSU | jq -r ".branch")
+            KERNELSU_REPO=$(echo $CUSTOM_KERNELSU | jq -r ".repo")
 
             # Delete old KernelSU
             if [ -d "./KernelSU" ]; then
@@ -241,7 +242,7 @@ jobs:
             fi
 
             # Apply new KernelSU patches
-            curl -LSs "https://raw.githubusercontent.com/$KERNELSU_USER/KernelSU/$KERNELSU_BRANCH/kernel/setup.sh" | bash -s $KERNELSU_BRANCH
+            curl -LSs "https://raw.githubusercontent.com/$KERNELSU_USER/$KERNELSU_REPO/$KERNELSU_BRANCH/kernel/setup.sh" | bash -s $KERNELSU_BRANCH
 
           else
         
