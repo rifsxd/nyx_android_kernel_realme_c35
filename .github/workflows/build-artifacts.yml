@@ -1,9 +1,9 @@
 name: Build kernel artifacts
 
 on:
-  push:
-    branches:
-      - "dev"
+  #push:
+  #  branches:
+  #    - "dev"
   workflow_dispatch:
   schedule:
     - cron: "0 12 * * *"
