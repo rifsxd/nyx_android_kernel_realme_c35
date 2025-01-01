@@ -278,10 +278,10 @@ jobs:
         run: |
           pip install ast-grep-cli
           sudo apt-get install llvm-15 -y
-          ast-grep -U -p '$$$ check_exports($$$) {$$$}' -r '' ${{ github.workspace }}/scripts/mod/modpost.c
-          ast-grep -U -p 'check_exports($$$);' -r '' ${{ github.workspace }}/scripts/mod/modpost.c
-          sed -i '/config KSU/,/help/{s/default y/default m/}' ${{ github.workspace }}/drivers/kernelsu/Kconfig
-          echo "drivers/kernelsu/kernelsu.ko" >> ${{ github.workspace }}/android/gki_aarch64_modules
+          ast-grep -U -p '$$$ check_exports($$$) {$$$}' -r '' common/scripts/mod/modpost.c
+          ast-grep -U -p 'check_exports($$$);' -r '' common/scripts/mod/modpost.c
+          sed -i '/config KSU/,/help/{s/default y/default m/}' common/drivers/kernelsu/Kconfig
+          echo "drivers/kernelsu/kernelsu.ko" >> common/android/gki_aarch64_modules
 
       - name: 👍 Start building the kernel
         working-directory: ${{ github.workspace }}
