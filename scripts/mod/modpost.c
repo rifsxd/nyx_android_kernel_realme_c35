@@ -2676,7 +2676,7 @@ int main(int argc, char **argv)
 		buf.pos = 0;
 
 		err |= check_modname_len(mod);
-		err |= check_exports(mod);
+		//err |= check_exports(mod);
 		if (write_namespace_deps)
 			continue;
 

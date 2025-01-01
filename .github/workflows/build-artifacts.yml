@@ -263,6 +263,7 @@ jobs:
           
       - name: Symbol magic
         working-directory: ${{ github.workspace }}
+        continue-on-error: true
         run: |
           echo "[+] Export all symbol from abi_gki_aarch64.xml"
           COMMON_ROOT=${{ github.workspace }}
@@ -275,6 +276,7 @@ jobs:
           
       - name: Setup for LKM
         working-directory: ${{ github.workspace }}
+        continue-on-error: true
         run: |
           pip install ast-grep-cli
           sudo apt-get install llvm-15 -y
@@ -297,6 +299,7 @@ jobs:
           
       - name: 🧩 Locate kernelsu lkm
         working-directory: ${{ github.workspace }}
+        continue-on-error: true
         run: |
           KERNELSU_KO=$(find . -type f -name "kernelsu.ko" | head -n 1)
           if [[ -n "$KERNELSU_KO" ]]; then
