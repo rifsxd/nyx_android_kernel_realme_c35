@@ -43,11 +43,8 @@ case "$1" in
     config-ksu)
         eval "$base_command realme_c35_nyx_ksu_defconfig"
         ;;
-    config-ksu-susfs-auto)
-        eval "$base_command realme_c35_nyx_ksu_susfs_auto_defconfig"
-        ;;
-    config-ksu-susfs-manual)
-        eval "$base_command realme_c35_nyx_ksu_susfs_manual_defconfig"
+    config-ksu-susfs)
+        eval "$base_command realme_c35_nyx_ksu_susfs_defconfig"
         ;;
     compile)
         eval "$base_command -j$(nproc) 2>&1 | tee ./out/kernel_log.log"
