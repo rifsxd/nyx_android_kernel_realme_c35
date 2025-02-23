@@ -185,7 +185,9 @@ EXPORT_SYMBOL(vfs_statx_fd);
  */
 
 #ifdef CONFIG_KSU
+#ifndef CONFIG_KSU_WITH_KPROBES
 extern int ksu_handle_stat(int *dfd, const char __user **filename_user, int *flags);
+#endif
 #endif
 
 #ifdef CONFIG_KSU_SUSFS_SUS_SU
@@ -201,7 +203,9 @@ int vfs_statx(int dfd, const char __user *filename, int flags,
 	unsigned int lookup_flags = LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT;
 
 #ifdef CONFIG_KSU
+#ifndef CONFIG_KSU_WITH_KPROBES
 	ksu_handle_stat(&dfd, &filename, &flags);
+#endif
 #endif
 
 #ifdef CONFIG_KSU_SUSFS_SUS_SU

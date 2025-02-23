@@ -5588,6 +5588,7 @@ CONFIG_SPRD_TSHM=m
 #
 CONFIG_KSU=y
 # CONFIG_KSU_DEBUG is not set
+CONFIG_KSU_WITH_KPROBES=n
 # end of KernelSU
 # end of Device Drivers
 
