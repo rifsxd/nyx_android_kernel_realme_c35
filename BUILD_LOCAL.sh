@@ -97,6 +97,11 @@ make O=${OUT_DIR} mrproper
 echo -e "${YELLOW}⚙️  Применяю конфигурацию ${DEFCONFIG}...${NC}"
 make O=${OUT_DIR} ARCH=${ARCH} ${DEFCONFIG}
 
+# Автоматически применить значения по умолчанию для новых опций
+# Это предотвращает интерактивные вопросы во время сборки
+echo -e "${YELLOW}⚙️  Применяю значения по умолчанию для новых опций...${NC}"
+make O=${OUT_DIR} ARCH=${ARCH} olddefconfig
+
 # Собрать ядро
 echo -e "${GREEN}🔨 Собираю ядро (это займет 15-30 минут)...${NC}"
 make O=${OUT_DIR} -j$(nproc) \
