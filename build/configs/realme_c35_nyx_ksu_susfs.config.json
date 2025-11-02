@@ -68,7 +68,7 @@
             "enable": true,
             "custom": {
                 "user": "rifsxd",
-                "branch": "next-susfs",
+                "branch": "next",
                 "repo": "KernelSU-Next"
             }
         }
